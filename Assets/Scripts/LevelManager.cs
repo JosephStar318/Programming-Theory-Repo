@@ -18,14 +18,22 @@ public class LevelManager : MonoBehaviour
     public bool isGameOver = true;
     public int killCount = 0;
 
+    public enum EnemyType
+    {
+        Fighter = 0,
+        Gladiator,
+        Ninja,
+        Wrestler
+    }
     private void Start()
     {
         Time.timeScale = 0;
         Instance = this;
     }
+    // POLÝMORFÝZM
     private void SpawnEnemies(int enemyCount)
     {
-        for (int i = 0; i < enemyCount; i++)
+        for (int i = 0; i < enemyCount-3; i++)
         {
             float randomX = Random.Range(-spawnRange, spawnRange);
             float randomZ = Random.Range(-spawnRange, spawnRange);
@@ -33,6 +41,14 @@ public class LevelManager : MonoBehaviour
             Vector3 randomPos = new Vector3(randomX, 3, randomZ);
             Instantiate(enemies[randomIndex], randomPos, enemies[randomIndex].transform.rotation);
         }
+    }
+    // POLÝMORFÝZM
+    private void SpawnEnemies(EnemyType enemyType)
+    {
+        float randomX = Random.Range(-spawnRange, spawnRange);
+        float randomZ = Random.Range(-spawnRange, spawnRange);
+        Vector3 randomPos = new Vector3(randomX, 3, randomZ);
+        Instantiate(enemies[((int)enemyType)], randomPos, enemies[((int)enemyType)].transform.rotation);
     }
 
     // Update is called once per frame
@@ -44,7 +60,22 @@ public class LevelManager : MonoBehaviour
             {
                 Debug.Log("Next Level...");
                 level++;
-                SpawnEnemies(level);
+                if(level == 2)
+                {
+                    SpawnEnemies(EnemyType.Gladiator);
+                }
+                else if(level == 3)
+                {
+                    SpawnEnemies(EnemyType.Ninja);
+                }
+                else if (level == 4)
+                {
+                    SpawnEnemies(EnemyType.Wrestler);
+                }
+                else
+                {
+                    SpawnEnemies(level);
+                }
             }
             if (player.transform.position.y < -10)
             {
@@ -58,7 +89,7 @@ public class LevelManager : MonoBehaviour
     {
         Cursor.visible = false;
         startScreen.SetActive(false);
-        SpawnEnemies(level);
+        SpawnEnemies(EnemyType.Fighter);
         isGameOver = false;
         Time.timeScale = 1;
         
